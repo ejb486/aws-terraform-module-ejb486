@@ -64,6 +64,7 @@ resource "aws_subnet" "api_private_dup_backend_subnet" {
 
   tags = merge(local.global_tags, {
     Name = "${local.project_id}-${local.private_dub_back_subnet_name}${count.index + 1}-${replace(local.dup_back_subnet[count.index], "/", "-")}-${replace(local.aws_azs[count.index], "ap-northeast-", "")}",
+    "kubernetes.io/role/internal-elb" = "1"
   })
   depends_on = [
     aws_vpc_ipv4_cidr_block_association.vpc_cidr
@@ -110,7 +111,7 @@ resource "aws_subnet" "api_public_dup_front_subnet" {
 # make s3 bucket for flow log 
 # 실제 운영에서는 s3 bucket 을 생성하지 않고 arn 을 가져와 사용합니다. 
 resource "aws_s3_bucket" "flow_log_bucket" {
-  bucket = "${local.project_id}-flow-log-s3"
+  bucket = "${local.project_id}-flow-log-s3-test"
   tags = {
     Name = "flow log s3"
   }
@@ -277,5 +278,48 @@ resource "aws_route_table_association" "rout_subnet_backend_2c" {
   subnet_id      = aws_subnet.api_private_unique_backend_subnet.1.id
   depends_on = [
     aws_subnet.api_private_unique_backend_subnet
+  ]
+}
+
+
+
+# dup backend 2a route table 생성
+resource "aws_route_table" "api_route_dup_backend_2a" {
+  vpc_id = aws_vpc.api_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.api_nat_front.0.id
+  }
+  tags = {
+    "Name" = "${local.project_id}-stg-rt-dup-backend-2a"
+  }
+}
+
+resource "aws_route_table_association" "rout_subnet_dup_backend_2a" {
+  route_table_id = aws_route_table.api_route_dup_backend_2a.id
+  subnet_id      = aws_subnet.api_private_dup_backend_subnet.0.id
+  depends_on = [
+    aws_subnet.api_private_dup_backend_subnet
+  ]
+}
+
+# dup backend 2c route table 생성
+resource "aws_route_table" "api_route_dup_backend_2c" {
+  vpc_id = aws_vpc.api_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.api_nat_front.1.id
+  }
+
+  tags = {
+    "Name" = "${local.project_id}-stg-rt-dup-backend-2c"
+  }
+}
+
+resource "aws_route_table_association" "rout_subnet_dup_backend_2c" {
+  route_table_id = aws_route_table.api_route_dup_backend_2c.id
+  subnet_id      = aws_subnet.api_private_dup_backend_subnet.1.id
+  depends_on = [
+    aws_subnet.api_private_dup_backend_subnet
   ]
 }

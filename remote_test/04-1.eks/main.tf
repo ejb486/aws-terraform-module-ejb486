@@ -58,10 +58,46 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket 					= "s3-smptttt-terraform"                        #bucket name
-    key         		= "terraform/smp/stg/vpc/terraform.tfstate"     #bucket key 
-    region 					= "ap-northeast-2"                          #region 
-    encrypt 				= true                                      #encrypt yn 
-    dynamodb_table 	= "dydb_smp_vpc_terraform"                      #dynamodb table for locking
+    bucket 					= "s3-smptttt-terraform"                            #bucket name
+    key         		= "terraform/smp/stg/eks/terraform.tfstate"     #bucket key 
+    region 					= "ap-northeast-2"                              #region 
+    encrypt 				= true                                          #encrypt yn 
+    dynamodb_table 	= "dydb_smp_eks_terraform"                      #dynamodb table for locking
+  }
+}
+
+data "terraform_remote_state" "vpc" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/vpc/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_vpc_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "iam" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/iam/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_iam_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "secgrp" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/secgrp/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_secgrp_terraform"
+    acl = "bucket-owner-full-control"
   }
 }

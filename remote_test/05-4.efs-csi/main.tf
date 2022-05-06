@@ -11,6 +11,13 @@ provider "aws" {
   profile = "default" # aws credential profile 
 }
 
+## helm provider setting 
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
+}
+
 # get aws caller identity
 data "aws_caller_identity" "current" {}
 
@@ -58,11 +65,11 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket 					= "s3-smptttt-terraform"                            #bucket name
-    key         		= "terraform/smp/stg/eks/terraform.tfstate"     #bucket key 
-    region 					= "ap-northeast-2"                              #region 
-    encrypt 				= true                                          #encrypt yn 
-    dynamodb_table 	= "dydb_smp_eks_terraform"                      #dynamodb table for locking
+    bucket 				= "s3-smptttt-terraform"                            #bucket name
+    key         		= "terraform/smp/stg/eksefscsi/terraform.tfstate"     #bucket key 
+    region 				= "ap-northeast-2"                              #region 
+    encrypt 			= true                                          #encrypt yn 
+    dynamodb_table 	    = "dydb_smp_eksefscsi_terraform"                      #dynamodb table for locking
   }
 }
 
@@ -98,6 +105,18 @@ data "terraform_remote_state" "secgrp" {
     region = "ap-northeast-2"
     encrypt = true
     #lock_table = "dydb_smp_secgrp_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/eks/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_iam_terraform"
     acl = "bucket-owner-full-control"
   }
 }

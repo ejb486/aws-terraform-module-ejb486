@@ -52,11 +52,6 @@ resource "aws_iam_openid_connect_provider" "eks_cluster_oidc" {
   ]
 }
 
-# 필요 없음 
-#locals {
-#  eks_oidc = replace(replace(aws_eks_cluster.eks_api.endpoint, "https://", ""), "/\\..*$/", "")
-#}
-
 # kube proxy addon manage 
 resource "aws_eks_addon" "addon_kube_proxy" {
   addon_name    = "kube-proxy" 
@@ -64,7 +59,8 @@ resource "aws_eks_addon" "addon_kube_proxy" {
   resolve_conflicts = "OVERWRITE"
   addon_version   = "v1.21.2-eksbuild.2"
   depends_on = [
-    aws_eks_cluster.eks_api
+    null_resource.cidr
+    #aws_eks_cluster.eks_api
   ]
 }
 
@@ -77,10 +73,8 @@ resource "aws_eks_addon" "addon_vpc_cni" {
   resolve_conflicts = "OVERWRITE"
   addon_version           = "v1.10.3-eksbuild.1"
   depends_on = [
-    aws_eks_cluster.eks_api,
-    aws_iam_role.eks_vpc_cni_role, 
-    /*aws_eks_node_group.mgmt_node,
-    aws_eks_node_group.worker_node*/
+    null_resource.cidr,
+    aws_iam_role.eks_vpc_cni_role
   ]
 }
 
@@ -98,6 +92,7 @@ resource "aws_iam_role" "eks_vpc_cni_role" {
   })
 }
 
+# policy document for vpc cni addon 
 data "aws_iam_policy_document" "eks_vpc_cni_policy_document" {
   statement {
     sid     = ""
@@ -118,9 +113,11 @@ data "aws_iam_policy_document" "eks_vpc_cni_policy_document" {
   }
 }
 
+# attach policy cni policy for vpc cni role 
 resource "aws_iam_role_policy_attachment" "eks_vpc_cni_role_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   role       = aws_iam_role.eks_vpc_cni_role.name
+  depends_on = [ aws_iam_role.eks_vpc_cni_role ]
 }
 
 # 통신 및 kubectl config 를 생성하고 kubectl 명령어를 수행해본다. 

@@ -11,6 +11,13 @@ provider "aws" {
   profile = "default" # aws credential profile 
 }
 
+## helm provider setting 
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
+}
+
 # get aws caller identity
 data "aws_caller_identity" "current" {}
 
@@ -23,8 +30,8 @@ locals {
   account_id   = data.aws_caller_identity.current.account_id
 
   project_id   = "smp"
+  cluster_name = "smp-stg-eks"
   env          = "stg"
-  cluster_name = "smp-${local.env}-eks"
   servicetitle = "smp"
 
   # vpc cidr block list   in vpc resource 
@@ -58,11 +65,11 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket 					= "s3-smptttt-terraform"                            #bucket name
-    key         		= "terraform/smp/stg/elb/terraform.tfstate"     #bucket key 
-    region 					= "ap-northeast-2"                              #region 
-    encrypt 				= true                                          #encrypt yn 
-    dynamodb_table 	= "dydb_smp_elb_terraform"                      #dynamodb table for locking
+    bucket 				= "s3-smptttt-terraform"                            #bucket name
+    key         		= "terraform/smp/stg/ekslb/terraform.tfstate"     #bucket key 
+    region 				= "ap-northeast-2"                              #region 
+    encrypt 			= true                                          #encrypt yn 
+    dynamodb_table 	    = "dydb_smp_ekslb_terraform"                      #dynamodb table for locking
   }
 }
 
@@ -74,6 +81,42 @@ data "terraform_remote_state" "vpc" {
     region = "ap-northeast-2"
     encrypt = true
     #lock_table = "dydb_smp_vpc_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "iam" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/iam/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_iam_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "secgrp" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/secgrp/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_secgrp_terraform"
+    acl = "bucket-owner-full-control"
+  }
+}
+
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    bucket = "s3-smptttt-terraform"
+    key = "terraform/smp/stg/eks/terraform.tfstate"
+    region = "ap-northeast-2"
+    encrypt = true
+    #lock_table = "dydb_smp_iam_terraform"
     acl = "bucket-owner-full-control"
   }
 }

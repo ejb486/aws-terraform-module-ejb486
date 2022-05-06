@@ -14,8 +14,8 @@ resource "null_resource" "cidr" {
         command     = <<EOT
             az1=$(echo ${local.aws_azs[0]})
             az2=$(echo ${local.aws_azs[1]})
-            sub1=$(echo ${data.terraform_remote_state.vpc.outputs.smp_unique_backend_subnet_ids[0]})
-            sub2=$(echo ${data.terraform_remote_state.vpc.outputs.smp_unique_backend_subnet_ids[1]})
+            sub1=$(echo ${data.terraform_remote_state.vpc.outputs.smp_dup_back_subnet_ids[0]})
+            sub2=$(echo ${data.terraform_remote_state.vpc.outputs.smp_dup_back_subnet_ids[1]})
             sg0=$(echo ${data.terraform_remote_state.secgrp.outputs.smp_cluster_security_group_id})
             cn=$(echo ${aws_eks_cluster.eks_api.name})
             echo $az1 $az2 $sub1 $sub2 $sg0 $cn
@@ -26,7 +26,7 @@ resource "null_resource" "cidr" {
     depends_on = [
       aws_eks_cluster.eks_api,
       null_resource.gen_backend, 
-      aws_eks_addon.addon_kube_proxy,
-      aws_eks_addon.addon_vpc_cni
+      #aws_eks_addon.addon_kube_proxy,
+      #aws_eks_addon.addon_vpc_cni
     ]
 }

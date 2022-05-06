@@ -13,7 +13,7 @@ provider "aws" {
 
 variable "stages" {
   type=list(string)
-  default=["vpc","iam","secgrp","eks","nodeg","elb","storage","wafv2"]
+  default=["vpc","iam","secgrp","eks","nodeg","elb","storage","wafv2","nodegw","ekslb","eksefscsi"]
 }
 
 # S3 bucket for backend

@@ -8,7 +8,8 @@
 
 provider "aws" {
   region  = "ap-northeast-2"
-  profile = "default" # aws credential profile 
+  #profile = "terraform" # aws credential profile 
+  profile = "default"
 }
 
 # get aws caller identity
@@ -22,10 +23,10 @@ data "aws_caller_identity" "current" {}
 locals {
   account_id   = data.aws_caller_identity.current.account_id
 
-  project_id   = "smp"
-  cluster_name = "smp-stg-eks"
+  project_id   = "codebuild"
   env          = "stg"
-  servicetitle = "smp"
+  cluster_name = "${local.project_id}-${local.env}-eks"
+  servicetitle = "codebuild"
 
   # vpc cidr block list   in vpc resource 
   vpc_cidr = "192.168.36.128/26"
@@ -36,10 +37,10 @@ locals {
   ]
 
   # cidr block lists for subnet 
-  unique_backend_subnet   = ["100.64.34.96/28", "100.64.34.112/28"]
-  dup_back_subnet         = ["100.64.0.0/22", "100.64.4.0/22"]
-  private_backend_subnet  = ["192.168.36.128/28", "192.168.36.144/28"]
-  public_dup_front_subnet = ["100.64.8.0/24", "100.64.9.0/24"]
+  private_unique_backend_subnet = ["100.64.34.96/28", "100.64.34.112/28"]
+  private_dup_backebd_subnet    = ["100.64.0.0/22", "100.64.4.0/22"]
+  private_backend_subnet        = ["192.168.36.128/28", "192.168.36.144/28"]
+  public_dup_front_subnet       = ["100.64.8.0/24", "100.64.9.0/24"]
 
   aws_azs = ["ap-northeast-2a", "ap-northeast-2c"]
 
@@ -58,10 +59,11 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket 					= "s3-smptttt-terraform"                        #bucket name
-    key         		= "terraform/smp/stg/vpc/terraform.tfstate"     #bucket key 
-    region 					= "ap-northeast-2"                          #region 
-    encrypt 				= true                                      #encrypt yn 
-    dynamodb_table 	= "dydb_smp_vpc_terraform"                      #dynamodb table for locking
+    bucket 					= "s3-codebuild-terraform"                                    #bucket name
+    key         		= "terraform/codebuild/stg/vpc/terraform.tfstate"    #bucket key 
+    region 					= "ap-northeast-2"                                                      #region 
+    encrypt 				= true                                                                  #encrypt yn 
+    dynamodb_table 	= "dydb_codebuild_vpc_terraform"                              #dynamodb table for locking
+    profile         = "default"
   }
 }

@@ -39,14 +39,14 @@ resource "aws_vpc_ipv4_cidr_block_association" "vpc_cidr" {
 
 ## make private unique backend subnets 
 resource "aws_subnet" "api_private_unique_backend_subnet" {
-  count                   = length(local.unique_backend_subnet)
+  count                   = length(local.private_unique_backend_subnet)
   vpc_id                  = aws_vpc.api_vpc.id
   availability_zone       = local.aws_azs[count.index]
-  cidr_block              = local.unique_backend_subnet[count.index]
+  cidr_block              = local.private_unique_backend_subnet[count.index]
   map_public_ip_on_launch = false
 
   tags = merge(local.global_tags, {
-    Name                              = "${local.project_id}-${local.private_uniq_backend_subnet_name}${count.index + 1}-${replace(local.unique_backend_subnet[count.index], "/", "-")}-${replace(local.aws_azs[count.index], "ap-northeast-", "")}",
+    Name                              = "${local.project_id}-${local.private_uniq_backend_subnet_name}${count.index + 1}-${replace(local.private_unique_backend_subnet[count.index], "/", "-")}-${replace(local.aws_azs[count.index], "ap-northeast-", "")}",
     "kubernetes.io/role/internal-elb" = "1"
   })
   depends_on = [
@@ -56,14 +56,14 @@ resource "aws_subnet" "api_private_unique_backend_subnet" {
 
 # make private dup backend subnets 
 resource "aws_subnet" "api_private_dup_backend_subnet" {
-  count                   = length(local.dup_back_subnet)
+  count                   = length(local.private_dup_backebd_subnet)
   vpc_id                  = aws_vpc.api_vpc.id
   availability_zone       = local.aws_azs[count.index]
-  cidr_block              = local.dup_back_subnet[count.index]
+  cidr_block              = local.private_dup_backebd_subnet[count.index]
   map_public_ip_on_launch = false
 
   tags = merge(local.global_tags, {
-    Name = "${local.project_id}-${local.private_dub_back_subnet_name}${count.index + 1}-${replace(local.dup_back_subnet[count.index], "/", "-")}-${replace(local.aws_azs[count.index], "ap-northeast-", "")}",
+    Name = "${local.project_id}-${local.private_dub_back_subnet_name}${count.index + 1}-${replace(local.private_dup_backebd_subnet[count.index], "/", "-")}-${replace(local.aws_azs[count.index], "ap-northeast-", "")}",
     "kubernetes.io/role/internal-elb" = "1"
   })
   depends_on = [

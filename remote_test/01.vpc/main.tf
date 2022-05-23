@@ -64,6 +64,6 @@ terraform {
     region 					= "ap-northeast-2"                                                      #region 
     encrypt 				= true                                                                  #encrypt yn 
     dynamodb_table 	= "dydb_codebuild_vpc_terraform"                              #dynamodb table for locking
-    assume_role_policy_arns = ["arn:aws:iam::516101421761:policy/s3-dydb-policy-for-cross-account"]
+    role_arn        = "arn:aws:iam::903584200073:role/role-for-cross-account"
   }
 }

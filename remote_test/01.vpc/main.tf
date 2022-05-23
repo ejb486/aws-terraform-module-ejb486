@@ -11,7 +11,7 @@ provider "aws" {
   #profile = "terraform" # aws credential profile 
   #profile = "default"
   assume_role {
-    role_arn = ${var.role_arn}
+    role_arn = "${var.role_arn}"
   }
 }
 

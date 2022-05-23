@@ -9,7 +9,10 @@
 provider "aws" {
   region  = "ap-northeast-2"
   #profile = "terraform" # aws credential profile 
-  profile = "default"
+  #profile = "default"
+  assume_role {
+    role_arn = ${var.role_arn}
+  }
 }
 
 # get aws caller identity

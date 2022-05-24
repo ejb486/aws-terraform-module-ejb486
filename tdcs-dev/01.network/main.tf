@@ -10,7 +10,7 @@ provider "aws" {
   region  = "ap-northeast-2"
 	#profile 	=	 "tdcsdev"
   assume_role {
-    role_arn = "${var.role_arn}"
+    role_arn = var.role_arn
   }
 }
 
@@ -31,7 +31,7 @@ locals {
   account_id   = data.aws_caller_identity.current.account_id
   cluster_name = "eks-full-sample"
   project_id   = "tdcs"
-  env          = "dev"
+  env          = "prd"
   servicetitle = "tdcs"
 
   # vpc cidr block list in vpc resource 
@@ -48,10 +48,10 @@ locals {
 
   aws_azs = ["ap-northeast-2a", "ap-northeast-2c"]
 
-  private_uniq_backend_subnet_name = "dev-snet-private-uniq-backend"
-  private_dub_backend_subnet_name  = "dev-snet-private-dup-backend"
-  private_backend_subnet_name      = "dev-snet-private-backend"
-  public_front_subnet_name         = "dev-snet-public-front"
+  private_uniq_backend_subnet_name = "${local.env}-snet-private-uniq-backend"
+  private_dub_backend_subnet_name  = "${local.env}-snet-private-dup-backend"
+  private_backend_subnet_name      = "${local.env}-snet-private-backend"
+  public_front_subnet_name         = "${local.env}-snet-public-front"
 
   global_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared",
@@ -61,11 +61,11 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket 					= "s3-tdcsdev-terraform"               #bucket name
+    bucket 					= "s3-tdcsprd-terraform"               #bucket name
     key         		= "terraform/network/terraform.tfstate"#bucket key 
     region 					= "ap-northeast-2"                     #region 
     encrypt 				= true                                 #encrypt yn 
-    dynamodb_table 	= "dydb_tdcsdev_network_terraform"     #dynamodb table for locking
+    dynamodb_table 	= "dydb_tdcsprd_network_terraform"     #dynamodb table for locking
     # backend 를 위한 iam role 은 terraform이 실행되면서 resource 가 provisioning 되는 account 와는 별개의 aws account 입니다. 
     # backend 를 위한 s3, dynamoDB 가 provisioning 되어 있는 account 에서 해당 role 을 s3와 dynamoDB 만  access 권한을 부여하여 terraform 에서 사용하도록 합니다. 
     role_arn        = "arn:aws:iam::875054318754:role/role-for-terraform-cross-account" # iam role for  backend s3 & dynamodb access 

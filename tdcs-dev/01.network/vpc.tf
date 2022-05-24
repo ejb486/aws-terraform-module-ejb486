@@ -8,7 +8,7 @@ resource "aws_vpc" "tdcs_vpc" {
   enable_dns_support   = true
   instance_tenancy     = "default"
   tags = {
-    Name = "${local.project_id}-dev-vpc"
+    Name = "${local.project_id}-prd-vpc"
   }
 }
 
@@ -124,7 +124,7 @@ transit_gateway_id = data.aws_ec2_transit_gateway.tdcs_transit_gateway.id
 vpc_id = aws_vpc.tdcs_vpc.id
 
   tags = {
-    "Name" = "${local.project_id}-dev-tg-attach"
+    "Name" = "${local.project_id}-prd-tg-attach"
    }
  }
 
@@ -132,7 +132,7 @@ vpc_id = aws_vpc.tdcs_vpc.id
 resource "aws_internet_gateway" "tdcs_igw" {
   vpc_id = aws_vpc.tdcs_vpc.id
   tags = {
-    "Name" = "${local.project_id}-dev-igw"
+    "Name" = "${local.project_id}-prd-igw"
   }
 }
 
@@ -154,7 +154,7 @@ resource "aws_nat_gateway" "tdcs_nat_public" {
   connectivity_type = "public"
 
   tags = {
-    "Name" = "${local.project_id}-dev-public-natgw-${replace(local.aws_azs[count.index], "ap-northeast-", "")}"
+    "Name" = "${local.project_id}-prd-public-natgw-${replace(local.aws_azs[count.index], "ap-northeast-", "")}"
   }
   depends_on = [
     aws_eip.tdcs_eip_nat
@@ -169,7 +169,7 @@ resource "aws_nat_gateway" "tdcs_nat_private" {
   connectivity_type = "private"
 
   tags = {
-    "Name" = "${local.project_id}-dev-private-natgw-${replace(local.aws_azs[count.index], "ap-northeast-", "")}"
+    "Name" = "${local.project_id}-prd-private-natgw-${replace(local.aws_azs[count.index], "ap-northeast-", "")}"
   }
 }
 
@@ -192,7 +192,7 @@ resource "aws_route_table" "tdcs_route_front" {
     gateway_id = data.aws_ec2_transit_gateway.tdcs_transit_gateway.id    
   }
   tags = {
-    "Name" = "${local.project_id}-dev-rt-front"
+    "Name" = "${local.project_id}-prd-rt-front"
   }
 }
 
@@ -230,7 +230,7 @@ resource "aws_route_table" "tdcs_route_backend_pri_2a" {
   }
 
   tags = {
-    "Name" = "${local.project_id}-dev-rt-backend-pri-2a"
+    "Name" = "${local.project_id}-prd-rt-backend-pri-2a"
   }
 
 }
@@ -268,7 +268,7 @@ resource "aws_route_table" "tdcs_route_backend_pri_2c" {
   }
 
   tags = {
-    "Name" = "${local.project_id}-dev-rt-backend-pri-2c"
+    "Name" = "${local.project_id}-prd-rt-backend-pri-2c"
   }
 
 }
@@ -310,7 +310,7 @@ resource "aws_route_table" "tdcs_route_backend_2a" {
     gateway_id = data.aws_ec2_transit_gateway.tdcs_transit_gateway.id    
   }
   tags = {
-    "Name" = "${local.project_id}-dev-rt-unique-backend-2a"
+    "Name" = "${local.project_id}-prd-rt-unique-backend-2a"
   }
 }
 
@@ -347,7 +347,7 @@ resource "aws_route_table" "tdcs_route_backend_2c" {
     gateway_id = data.aws_ec2_transit_gateway.tdcs_transit_gateway.id    
   }
   tags = {
-    "Name" = "${local.project_id}-dev-rt-unique-backend-2c"
+    "Name" = "${local.project_id}-prd-rt-unique-backend-2c"
   }
 }
 
@@ -366,7 +366,7 @@ resource "aws_route_table" "tdcs_route_dup_backend_2a" {
   }
 
   tags = {
-    "Name" = "${local.project_id}-dev-rt-dup-backend-2a"
+    "Name" = "${local.project_id}-prd-rt-dup-backend-2a"
   }
 }
 
@@ -387,7 +387,7 @@ resource "aws_route_table" "tdcs_route_dup_backend_2c" {
   }
 
   tags = {
-    "Name" = "${local.project_id}-dev-rt-dup-backend-2c"
+    "Name" = "${local.project_id}-prd-rt-dup-backend-2c"
   }
 }
 

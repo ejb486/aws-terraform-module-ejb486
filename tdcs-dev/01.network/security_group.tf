@@ -1,10 +1,10 @@
 # rds security group
 resource "aws_security_group" "sg_rds" {
-  name = "sgroup-rds-tdcs-dev"
-  description = "sgroup-rds-tdcs-dev"
+  name = "sgroup-rds-tdcs-prd"
+  description = "sgroup-rds-tdcs-prd"
   vpc_id      = aws_vpc.tdcs_vpc.id
   tags = merge(local.global_tags, {
-    "Name"    = "sgroup-rds-tdcs-dev",
+    "Name"    = "sgroup-rds-tdcs-prd",
     "Creator" = "1112965"
   })
 }
@@ -61,11 +61,11 @@ resource "aws_security_group_rule" "sgr_rds_ingress_nlb" {
 
 # rds security group
 resource "aws_security_group" "sg_nlb_rds" {
-  name = "sgroup-nlb-rds-tdcs-dev"
-  description = "sgroup-nlb-rds-tdcs-dev"
+  name = "sgroup-nlb-rds-tdcs-prd"
+  description = "sgroup-nlb-rds-tdcs-prd"
   vpc_id      = aws_vpc.tdcs_vpc.id
   tags = merge(local.global_tags, {
-    "Name"    = "sgroup-nlb-rds-tdcs-dev",
+    "Name"    = "sgroup-nlb-rds-tdcs-prd",
     "Creator" = "1112965"
   })
 }

@@ -10,13 +10,8 @@ provider "aws" {
   region  = "ap-northeast-2"
 	#profile 	=	 "tdcsdev"
   assume_role {
-    role_arn = var.role_arn
+    role_arn = "${var.role_arn}
   }
-}
-
-variable "role_arn" {
-  type = string
-  description = "resource provisioning aws account role"
 }
 
 # get aws caller identity 
